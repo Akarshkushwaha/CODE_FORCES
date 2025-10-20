@@ -1,5 +1,4 @@
-#include <iostream>
-#include <vector>
+#include <
 using namespace std;
 
 int main()
@@ -17,33 +16,40 @@ int main()
         for (int i = 0; i < n; i++)
             cin >> a[i];
 
-        a.insert(a.begin(), (long long)1e18);
-        a.push_back((long long)1e18);
-
-        long long cost1 = 0, cost2 = 0;
-
-        for (int i = 1; i < n + 1; i++)
+        // If already small, no changes needed
+        if (n == 2)
         {
-            if (i % 2 == 1)
-            { // peak
-                long long limit = min(a[i - 1], a[i + 1]) - 1;
-                if (a[i] > limit)
-                    cost1 += a[i] - limit;
-            }
+            cout << 0 << "\n";
+            continue;
         }
 
-        for (int i = 1; i < n + 1; i++)
+        // Case 1: make valleys at odd indices (1,3,5,...)
+        long long cost1 = 0;
+        for (int i = 1; i < n; i += 2)
         {
-            if (i % 2 == 0)
-            { // peak
-                long long limit = min(a[i - 1], a[i + 1]) - 1;
-                if (a[i] > limit)
-                    cost2 += a[i] - limit;
-            }
+            long long left = (i - 1 >= 0 ? a[i - 1] : (long long)1e18);
+            long long right = (i + 1 < n ? a[i + 1] : (long long)1e18);
+            long long min_neigh = min(left, right);
+            if (a[i] >= min_neigh)
+                cost1 += a[i] - (min_neigh - 1);
         }
 
-        cout << min(cost1, cost2) << "\n";
+        // Case 2: make valleys at even indices (2,4,6,...)
+        long long cost2 = 0;
+        for (int i = 0; i < n; i += 2)
+        {
+            long long left = (i - 1 >= 0 ? a[i - 1] : (long long)1e18);
+            long long right = (i + 1 < n ? a[i + 1] : (long long)1e18);
+            long long min_neigh = min(left, right);
+            if (a[i] >= min_neigh)
+                cost2 += a[i] - (min_neigh - 1);
+        }
+
+        // If array length is odd, only one pattern possible (valleys on odd indices)
+        if (n % 2 == 1)
+            cout << cost1 << "\n";
+        else
+            cout << min(cost1, cost2) << "\n";
     }
-
     return 0;
 }

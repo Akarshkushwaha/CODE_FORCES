@@ -23,7 +23,7 @@ int main()
                 if (i - last_one >= k)
                 {
                     protected_count++;
-                                }
+                }
                 last_one = i;
             }
         }
