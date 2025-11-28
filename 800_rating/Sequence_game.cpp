@@ -1,40 +1,52 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int main()
-{
+int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
     int t;
     cin >> t;
-    while (t--)
-    {
+
+    while (t--) {
         int n;
         cin >> n;
 
-        vector<long long> b(n);
-        for (int i = 0; i < n; i++)
-        {
-            cin >> b[i];
+        vector<long long> a(n), b(n);
+        for (int i = 0; i < n; i++) cin >> a[i];
+        for (int i = 0; i < n; i++) cin >> b[i];
+
+        // Step 1: Find the two largest values from DIFFERENT indices
+        vector<pair<long long, int>> all;
+        all.reserve(2 * n);
+        for (int i = 0; i < n; i++) {
+            all.push_back({a[i], i});
+            all.push_back({b[i], i});
         }
 
-        vector<long long> a;
-        a.push_back(b[0]); // First element always included
+        sort(all.begin(), all.end(), greater<>());
 
-        for (int i = 0; i < n - 1; i++)
-        {
-            if (b[i] > b[i + 1])
-            {
-                a.push_back(1); // insert small number to make decrease possible
+        long long max1 = all[0].first;
+        int idx1 = all[0].second;
+
+        long long max2 = -1;
+        for (auto [val, idx] : all) {
+            if (idx != idx1) {  // ensure from different index
+                max2 = val;
+                break;
             }
-            a.push_back(b[i + 1]);
         }
 
-        cout << a.size() << "\n";
-        for (auto x : a)
-            cout << x << " ";
-        cout << "\n"; // print newline after the full sequence
+        long long limit = max1 + max2;
+
+        // Step 2: Count indices i >= 3 satisfying the condition
+        int count_small = 0;
+        for (int i = 2; i < n; i++) {
+            long long c1 = a[i], c2 = b[i];
+            if (c1 <= limit || c2 <= limit) count_small++;
+        }
+
+        cout << count_small << "\n";
     }
 
     return 0;
